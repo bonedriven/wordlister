@@ -9,6 +9,8 @@ Add the icons directory as a sub-directory to the wordlister.py file.
 
 You can change the word lengths, scores and wordlist locations in the settings menu. The keys to rescore are displayed onscreen.
 
+![wordlister in action]((https://github.com/bonedriven/wordlister/blob/fe2b592d4eadbd8ff979d588868a9dd94fe3d47f/wordlister.png))
+
 
 Vector images designed by ibrandify / Freepik
 
