@@ -3,218 +3,308 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wordlister — Rescoring Tool</title>
+<title>Wordlister</title>
 <style>
   :root {
-    --bg: #1a1a2e;
-    --surface: #16213e;
-    --surface2: #0f3460;
-    --text: #e0e0e0;
-    --text-muted: #8899aa;
-    --accent: #e94560;
-    --bucket-0: #e74c3c;
-    --bucket-25: #f39c12;
-    --bucket-50: #3498db;
-    --bucket-60: #2ecc71;
-    --bucket-61: #9b59b6;
+    --bg: #111117;
+    --surface: #1c1c28;
+    --surface2: #2a2a3d;
+    --surface3: #363650;
+    --text: #e8e8f0;
+    --text-muted: #7a7a96;
+    --accent: #6c63ff;
+    --accent-glow: rgba(108, 99, 255, 0.15);
+    --green: #34d399;
+    --red: #f87171;
+    --orange: #fbbf24;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
     user-select: none;
+    overflow: hidden;
   }
 
-  .container {
+  .app {
     width: 100%;
-    max-width: 800px;
-    padding: 2rem 1.5rem;
+    max-width: 720px;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    flex: 1;
+    gap: 1.25rem;
   }
 
-  /* Header */
+  /* ---- Header ---- */
   header {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  header h1 { font-size: 1.4rem; font-weight: 600; }
-  .header-actions { display: flex; gap: 0.5rem; }
-  .btn {
-    padding: 0.4rem 1rem;
-    border: 1px solid var(--surface2);
-    background: var(--surface);
-    color: var(--text);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: background 0.15s;
-  }
-  .btn:hover { background: var(--surface2); }
-  .btn-save { border-color: var(--bucket-60); color: var(--bucket-60); }
-  .btn-save:hover { background: var(--bucket-60); color: #fff; }
-
-  /* Progress */
-  .progress-section { display: flex; flex-direction: column; gap: 0.4rem; }
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-  .progress-bar-track {
-    height: 6px;
-    background: var(--surface2);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-    width: 0%;
-  }
-
-  /* Bucket scale */
-  .bucket-scale {
-    display: flex;
-    justify-content: center;
-    gap: 0.25rem;
-    padding: 0.5rem 0;
-  }
-  .bucket-chip {
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    opacity: 0.4;
-    transition: opacity 0.2s, transform 0.2s;
-    border: 2px solid transparent;
-  }
-  .bucket-chip.active {
-    opacity: 1;
-    transform: scale(1.1);
-    border-color: #fff;
-  }
-
-  /* Word card */
-  .word-card {
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 3rem 2rem;
-    text-align: center;
-    border: 3px solid var(--surface2);
-    transition: border-color 0.3s;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 0.75rem;
-    position: relative;
-  }
-  .word-text {
-    font-size: 3.5rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    line-height: 1.2;
-  }
-  .word-meta {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-  }
-  .word-card.done-state {
-    border-color: var(--bucket-60);
-  }
-  .word-card.done-state .word-text {
-    font-size: 1.5rem;
-    color: var(--bucket-60);
-  }
-
-  /* Score flash */
-  .score-flash {
-    position: absolute;
-    top: 0.75rem;
-    right: 1rem;
+  .logo {
     font-size: 1rem;
-    font-weight: 700;
-    opacity: 0;
-    transition: opacity 0.15s;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
-  .score-flash.show { opacity: 1; }
-  .score-flash.up { color: var(--bucket-60); }
-  .score-flash.down { color: var(--bucket-0); }
-  .score-flash.same { color: var(--text-muted); }
-
-  /* Keybindings */
-  .keybindings {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-  .key-hint {
+  .header-right {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.75rem;
+  }
+  .remaining-badge {
     font-size: 0.8rem;
     color: var(--text-muted);
+    background: var(--surface);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
   }
+  .remaining-badge strong {
+    color: var(--text);
+  }
+  .icon-btn {
+    background: none;
+    border: 1px solid var(--surface2);
+    color: var(--text-muted);
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { background: var(--surface2); color: var(--text); }
+  .icon-btn.save-btn:hover { border-color: var(--green); color: var(--green); }
+  .icon-btn[data-has-undo="true"] { color: var(--text); border-color: var(--surface3); }
+  .icon-btn[data-has-undo="false"] { opacity: 0.3; cursor: default; }
+
+  /* ---- Progress ---- */
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0%;
+  }
+  .progress-pct {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    min-width: 3.5rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- Word Card ---- */
+  .card-wrapper {
+    position: relative;
+    min-height: 210px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .word-card {
+    width: 100%;
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    text-align: center;
+    border: 2px solid var(--surface2);
+    transition: border-color 0.25s, opacity 0.15s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: absolute;
+    inset: 0;
+    justify-content: center;
+  }
+  .word-card.entering {
+    animation: cardIn 0.18s ease-out forwards;
+  }
+  .word-card.exiting {
+    animation: cardOut 0.12s ease-in forwards;
+    pointer-events: none;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes cardOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(-12px) scale(0.98); }
+  }
+
+  .word-text {
+    font-size: 3.2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    transition: color 0.2s;
+  }
+  .word-length {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Score flash overlay */
+  .flash-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s;
+  }
+  .flash-overlay.show { opacity: 1; }
+  .flash-overlay.up   { background: rgba(52, 211, 153, 0.08); color: var(--green); }
+  .flash-overlay.down { background: rgba(248, 113, 113, 0.08); color: var(--red); }
+  .flash-overlay.same { background: rgba(122, 122, 150, 0.05); color: var(--text-muted); }
+
+  /* Done state */
+  .word-card.done-state {
+    border-color: var(--green);
+    background: linear-gradient(135deg, var(--surface), rgba(52, 211, 153, 0.05));
+  }
+  .word-card.done-state .word-text {
+    font-size: 1.3rem;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  /* Empty state */
+  .word-card.empty-state .word-text {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* ---- Bucket Scale + Keybindings ---- */
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 2px;
+  }
+  .control-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    max-width: 120px;
+    padding: 0.6rem 0.3rem;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .control-slot:hover {
+    background: var(--surface);
+  }
+  .bucket-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .bucket-dot.active {
+    transform: scale(1.6);
+    box-shadow: 0 0 12px currentColor;
+  }
+  .bucket-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: color 0.15s, opacity 0.15s;
+    opacity: 0.4;
+  }
+  .bucket-label.active { opacity: 1; }
   kbd {
     display: inline-block;
-    padding: 0.15rem 0.5rem;
+    padding: 0.1rem 0.45rem;
     background: var(--surface2);
     border-radius: 4px;
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: var(--text);
-    border: 1px solid #334466;
+    color: var(--text-muted);
+    border: 1px solid var(--surface3);
+    line-height: 1.4;
+  }
+  .key-desc {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+  .control-divider {
+    width: 1px;
+    background: var(--surface2);
+    align-self: stretch;
+    margin: 0 0.25rem;
   }
 
-  /* Ticker */
+  /* ---- Ticker ---- */
   .ticker {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
-    min-height: 60px;
+    gap: 4px;
+    min-height: 46px;
     align-items: center;
   }
   .ticker-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.2rem;
-    padding: 0.4rem 0.6rem;
+    gap: 0.35rem;
+    padding: 0.3rem 0.55rem;
     background: var(--surface);
     border-radius: 6px;
     border: 1px solid var(--surface2);
-    min-width: 80px;
-    animation: fadeIn 0.2s ease;
+    animation: tickIn 0.2s ease-out;
+    font-size: 0.75rem;
   }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  .ticker-icon { font-size: 1.2rem; }
-  .ticker-word { font-size: 0.75rem; color: var(--text-muted); }
-  .ticker-score { font-size: 0.65rem; font-weight: 600; }
+  @keyframes tickIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .ticker-item .t-icon { font-weight: 700; }
+  .ticker-item .t-word { color: var(--text-muted); }
 
-  /* Settings modal */
+  /* ---- Settings Modal ---- */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
     display: none;
     justify-content: center;
     align-items: center;
@@ -223,101 +313,134 @@
   .modal-overlay.open { display: flex; }
   .modal {
     background: var(--surface);
-    border-radius: 12px;
-    padding: 2rem;
+    border-radius: 16px;
+    padding: 1.75rem;
     width: 90%;
-    max-width: 500px;
+    max-width: 460px;
     max-height: 80vh;
     overflow-y: auto;
     border: 1px solid var(--surface2);
+    animation: modalIn 0.2s ease-out;
   }
-  .modal h2 { margin-bottom: 1rem; font-size: 1.2rem; }
-  .form-group {
-    margin-bottom: 1rem;
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to   { opacity: 1; transform: none; }
   }
+  .modal h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+  .form-group { margin-bottom: 0.9rem; }
   .form-group label {
     display: block;
-    margin-bottom: 0.3rem;
-    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
   .form-group input {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.5rem 0.6rem;
     background: var(--bg);
     border: 1px solid var(--surface2);
     color: var(--text);
-    border-radius: 6px;
-    font-size: 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
   }
-  .form-row {
-    display: flex;
-    gap: 1rem;
-  }
+  .form-group input:focus { border-color: var(--accent); }
+  .form-row { display: flex; gap: 0.75rem; }
   .form-row .form-group { flex: 1; }
   .modal-actions {
     display: flex;
     gap: 0.5rem;
     justify-content: flex-end;
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
+  .btn {
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--surface3);
     background: var(--surface2);
     color: var(--text);
-    padding: 0.6rem 1.2rem;
     border-radius: 8px;
-    font-size: 0.85rem;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--surface3); }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { filter: brightness(1.15); }
+
+  /* ---- Toast ---- */
+  .toast {
+    position: fixed;
+    top: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: var(--surface2);
+    color: var(--text);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
     opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.15s, transform 0.15s;
     z-index: 200;
     pointer-events: none;
+    border: 1px solid var(--surface3);
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.toast-warn { border-color: var(--orange); color: var(--orange); }
+
+  /* Focus ring for accessibility */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app">
   <header>
-    <h1>Wordlister</h1>
-    <div class="header-actions">
-      <button class="btn btn-save" onclick="save()" title="Ctrl+S">Save</button>
-      <button class="btn" onclick="openSettings()">Settings</button>
+    <div class="logo">Wordlister</div>
+    <div class="header-right">
+      <div class="remaining-badge" id="remaining-badge">
+        <strong id="remaining-num">-</strong> left
+      </div>
+      <button class="icon-btn" id="undo-btn" data-has-undo="false"
+              onclick="undo()" title="Undo (U)">&#x21B6;</button>
+      <button class="icon-btn save-btn" onclick="save()" title="Save (Ctrl+S)">&#x2713;</button>
+      <button class="icon-btn" onclick="openSettings()" title="Settings">&#x2699;</button>
     </div>
   </header>
 
-  <div class="progress-section">
-    <div class="progress-header">
-      <span id="progress-pct">0%</span>
-      <span id="progress-count">0 / 0</span>
+  <div class="progress">
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
     </div>
-    <div class="progress-bar-track">
-      <div class="progress-bar-fill" id="progress-fill"></div>
+    <div class="progress-pct" id="progress-pct">0%</div>
+  </div>
+
+  <div class="card-wrapper" id="card-wrapper">
+    <div class="word-card entering" id="word-card">
+      <div class="word-text" id="word-text">Loading...</div>
+      <div class="word-length" id="word-length"></div>
     </div>
+    <div class="flash-overlay" id="flash-overlay"></div>
   </div>
 
-  <div class="bucket-scale" id="bucket-scale"></div>
-
-  <div class="word-card" id="word-card">
-    <div class="word-text" id="word-text">Loading...</div>
-    <div class="word-meta" id="word-meta"></div>
-    <div class="score-flash" id="score-flash"></div>
-  </div>
-
-  <div class="keybindings">
-    <span class="key-hint"><kbd>Q</kbd> --</span>
-    <span class="key-hint"><kbd>A</kbd> -</span>
-    <span class="key-hint"><kbd>Space</kbd> keep</span>
-    <span class="key-hint"><kbd>D</kbd> +</span>
-    <span class="key-hint"><kbd>E</kbd> ++</span>
-    <span class="key-hint"><kbd>U</kbd> undo</span>
-  </div>
+  <div class="controls" id="controls"></div>
 
   <div class="ticker" id="ticker"></div>
 </div>
@@ -327,11 +450,11 @@
   <div class="modal">
     <h2>Settings</h2>
     <div class="form-group">
-      <label>Master Wordlist File</label>
+      <label>Master Wordlist</label>
       <input type="text" id="s-master">
     </div>
     <div class="form-group">
-      <label>Personal Wordlist File</label>
+      <label>Personal Wordlist</label>
       <input type="text" id="s-personal">
     </div>
     <div class="form-group">
@@ -340,11 +463,11 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label>Min Word Length</label>
+        <label>Min Length</label>
         <input type="number" id="s-len-min" min="1">
       </div>
       <div class="form-group">
-        <label>Max Word Length</label>
+        <label>Max Length</label>
         <input type="number" id="s-len-max" min="1">
       </div>
     </div>
@@ -360,7 +483,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeSettings()">Cancel</button>
-      <button class="btn btn-save" onclick="saveSettings()">Save & Reload</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save & Reload</button>
     </div>
   </div>
 </div>
@@ -369,157 +492,270 @@
 
 <script>
 const ACTIONS = {
-  KeyD: "increase",
+  KeyQ: "decrease_double",
   KeyA: "decrease",
   Space: "keep",
-  KeyQ: "decrease_double",
+  KeyD: "increase",
   KeyE: "increase_double",
 };
 
-const ICONS = {
-  increase: "\u25B2",
-  decrease: "\u25BC",
-  keep: "\u25CF",
-  increase_double: "\u25B2\u25B2",
-  decrease_double: "\u25BC\u25BC",
+// Maps each bucket to its key, icon, and description — ordered left to right
+const BUCKET_KEYS = [
+  { action: "decrease_double", key: "Q", icon: "\u25BC\u25BC", desc: "down 2" },
+  { action: "decrease",        key: "A", icon: "\u25BC",       desc: "down" },
+  { action: "keep",            key: "Space", icon: "\u25CF",   desc: "keep" },
+  { action: "increase",        key: "D", icon: "\u25B2",       desc: "up" },
+  { action: "increase_double", key: "E", icon: "\u25B2\u25B2", desc: "up 2" },
+];
+
+// Bucket colors — index into BUCKET_ORDER (ascending: worst to best)
+const BUCKET_COLORS = {
+  0:  { color: "var(--red)",    label: "Terrible" },
+  25: { color: "var(--orange)", label: "Poor" },
+  50: { color: "var(--blue)",   label: "Fair" },
+  60: { color: "var(--green)",  label: "Good" },
+  61: { color: "var(--purple)", label: "Great" },
 };
 
-let buckets = {};
-let bucketOrder = [];
+let serverBuckets = {};
+let bucketOrder = [];   // descending from server
+let ascOrder = [];      // ascending for display
 let locked = false;
-let ticker = [];
+let tickerItems = [];
+let historySize = 0;
+let currentWordData = null;
 const MAX_TICKER = 7;
 
+// ---- API ----
 async function api(path, opts) {
   const res = await fetch("/api" + path, opts);
   return res.json();
 }
 
-function toast(msg) {
+// ---- Toast ----
+let toastTimer = null;
+function toast(msg, warn) {
   const el = document.getElementById("toast");
   el.textContent = msg;
-  el.classList.add("show");
-  setTimeout(() => el.classList.remove("show"), 1500);
+  el.className = "toast show" + (warn ? " toast-warn" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 1400);
 }
 
-function updateProgress(done, total) {
-  const pct = total > 0 ? ((done / total) * 100).toFixed(1) : 0;
-  document.getElementById("progress-pct").textContent = pct + "%";
-  document.getElementById("progress-count").textContent = done + " / " + total;
+// ---- Progress ----
+function updateProgress(done, total, remaining) {
+  const pct = total > 0 ? ((done / total) * 100).toFixed(1) : "0";
+  document.getElementById("progress-pct").textContent = done + "/" + total;
   document.getElementById("progress-fill").style.width = pct + "%";
-}
-
-function renderBucketScale(activeScore) {
-  const el = document.getElementById("bucket-scale");
-  el.innerHTML = "";
-  // Render in ascending order (worst to best)
-  const ordered = [...bucketOrder].reverse();
-  for (const score of ordered) {
-    const info = buckets[score];
-    const chip = document.createElement("span");
-    chip.className = "bucket-chip" + (score === activeScore ? " active" : "");
-    chip.style.background = info.color + "33";
-    chip.style.color = info.color;
-    if (score === activeScore) chip.style.borderColor = info.color;
-    chip.textContent = info.label;
-    el.appendChild(chip);
+  if (remaining !== undefined) {
+    document.getElementById("remaining-num").textContent = remaining;
   }
 }
 
-function showWord(data) {
-  const card = document.getElementById("word-card");
-  const text = document.getElementById("word-text");
-  const meta = document.getElementById("word-meta");
+// ---- Controls (bucket scale + keybindings, built once) ----
+function buildControls() {
+  const el = document.getElementById("controls");
+  el.innerHTML = "";
+
+  for (let i = 0; i < ascOrder.length; i++) {
+    const score = ascOrder[i];
+    const info = BUCKET_COLORS[score] || serverBuckets[score] || { color: "#888", label: "?" };
+    const keyInfo = BUCKET_KEYS[i] || {};
+
+    const slot = document.createElement("div");
+    slot.className = "control-slot";
+    slot.dataset.bucket = score;
+
+    const dot = document.createElement("div");
+    dot.className = "bucket-dot";
+    dot.id = "dot-" + score;
+    dot.style.background = info.color;
+    dot.style.color = info.color;
+    slot.appendChild(dot);
+
+    const label = document.createElement("div");
+    label.className = "bucket-label";
+    label.id = "label-" + score;
+    label.style.color = info.color;
+    label.textContent = info.label;
+    slot.appendChild(label);
+
+    const key = document.createElement("kbd");
+    key.textContent = keyInfo.key || "";
+    slot.appendChild(key);
+
+    const desc = document.createElement("div");
+    desc.className = "key-desc";
+    desc.textContent = keyInfo.desc || "";
+    slot.appendChild(desc);
+
+    el.appendChild(slot);
+
+    // Add divider after bucket 2 (before "keep" space)
+    if (i === 1) {
+      const div = document.createElement("div");
+      div.className = "control-divider";
+      el.appendChild(div);
+    }
+    if (i === 2) {
+      const div = document.createElement("div");
+      div.className = "control-divider";
+      el.appendChild(div);
+    }
+  }
+}
+
+function highlightBucket(activeScore) {
+  for (const score of ascOrder) {
+    const dot = document.getElementById("dot-" + score);
+    const label = document.getElementById("label-" + score);
+    if (!dot || !label) continue;
+    if (score === activeScore) {
+      dot.classList.add("active");
+      label.classList.add("active");
+    } else {
+      dot.classList.remove("active");
+      label.classList.remove("active");
+    }
+  }
+}
+
+// ---- Word Display ----
+function showWord(data, animate) {
+  currentWordData = data;
+  const wrapper = document.getElementById("card-wrapper");
+  const oldCard = document.getElementById("word-card");
+
+  if (animate && oldCard) {
+    // Animate old card out, then create new
+    oldCard.id = "";
+    oldCard.classList.remove("entering");
+    oldCard.classList.add("exiting");
+    oldCard.addEventListener("animationend", () => oldCard.remove(), { once: true });
+  } else if (oldCard) {
+    oldCard.remove();
+  }
+
+  const card = document.createElement("div");
+  card.className = "word-card" + (animate ? " entering" : "");
+  card.id = "word-card";
+
+  const text = document.createElement("div");
+  text.className = "word-text";
+  text.id = "word-text";
+
+  const length = document.createElement("div");
+  length.className = "word-length";
+  length.id = "word-length";
 
   if (!data) {
-    card.className = "word-card done-state";
-    text.textContent = "All words rescored!";
-    meta.textContent = "";
-    renderBucketScale(null);
-    return;
-  }
-
-  card.className = "word-card";
-  const color = (buckets[data.score] || {}).color || "#888";
-  card.style.borderColor = color;
-  text.textContent = data.word;
-  meta.textContent = (buckets[data.score] || {}).label || "Score: " + data.score;
-  renderBucketScale(data.score);
-}
-
-function flashScore(oldScore, newScore, action) {
-  const el = document.getElementById("score-flash");
-  const diff = newScore - oldScore;
-  if (diff > 0) {
-    el.textContent = "\u25B2 " + (buckets[newScore] || {}).label;
-    el.className = "score-flash show up";
-  } else if (diff < 0) {
-    el.textContent = "\u25BC " + (buckets[newScore] || {}).label;
-    el.className = "score-flash show down";
+    if (ascOrder.length === 0) {
+      // No words loaded at all
+      card.classList.add("empty-state");
+      text.textContent = "No words in queue. Check your settings and wordlist files.";
+      length.textContent = "";
+    } else {
+      card.classList.add("done-state");
+      text.textContent = "All done!";
+      length.textContent = "Every word in this filter has been rescored.";
+      length.style.color = "var(--green)";
+      length.style.opacity = "0.7";
+    }
+    highlightBucket(null);
   } else {
-    el.textContent = "kept";
-    el.className = "score-flash show same";
+    const info = BUCKET_COLORS[data.score] || { color: "#888" };
+    card.style.borderColor = info.color;
+    text.textContent = data.word;
+    length.textContent = data.word.length + " letters";
+    highlightBucket(data.score);
   }
-  setTimeout(() => { el.classList.remove("show"); }, 600);
+
+  card.appendChild(text);
+  card.appendChild(length);
+  wrapper.insertBefore(card, wrapper.firstChild);
 }
 
-function addTicker(word, action, oldScore, newScore) {
-  const color = (buckets[newScore] || {}).color || "#888";
-  ticker.unshift({ word, action, color, oldScore, newScore });
-  if (ticker.length > MAX_TICKER) ticker.pop();
+// ---- Flash Feedback ----
+function flash(oldScore, newScore) {
+  const el = document.getElementById("flash-overlay");
+  const diff = newScore - oldScore;
+  const info = BUCKET_COLORS[newScore] || {};
+  if (diff > 0) {
+    el.textContent = "\u25B2 " + (info.label || newScore);
+    el.className = "flash-overlay show up";
+  } else if (diff < 0) {
+    el.textContent = "\u25BC " + (info.label || newScore);
+    el.className = "flash-overlay show down";
+  } else {
+    el.textContent = "Kept";
+    el.className = "flash-overlay show same";
+  }
+  setTimeout(() => el.classList.remove("show"), 450);
+}
+
+// ---- Undo Button State ----
+function updateUndoBtn() {
+  document.getElementById("undo-btn").dataset.hasUndo = historySize > 0 ? "true" : "false";
+}
+
+// ---- Ticker ----
+function addTicker(word, action, newScore) {
+  const info = BUCKET_COLORS[newScore] || { color: "#888", label: "?" };
+  const icon = (BUCKET_KEYS.find(k => k.action === action) || {}).icon || "?";
+  tickerItems.unshift({ word, icon, color: info.color });
+  if (tickerItems.length > MAX_TICKER) tickerItems.pop();
   renderTicker();
 }
 
 function renderTicker() {
   const el = document.getElementById("ticker");
   el.innerHTML = "";
-  for (const item of ticker) {
+  for (const item of tickerItems) {
     const div = document.createElement("div");
     div.className = "ticker-item";
 
-    const icon = document.createElement("div");
-    icon.className = "ticker-icon";
-    icon.textContent = ICONS[item.action] || "?";
+    const icon = document.createElement("span");
+    icon.className = "t-icon";
+    icon.textContent = item.icon;
     icon.style.color = item.color;
     div.appendChild(icon);
 
-    const word = document.createElement("div");
-    word.className = "ticker-word";
+    const word = document.createElement("span");
+    word.className = "t-word";
     word.textContent = item.word;
     div.appendChild(word);
-
-    const score = document.createElement("div");
-    score.className = "ticker-score";
-    score.style.color = item.color;
-    score.textContent = (buckets[item.newScore] || {}).label || item.newScore;
-    div.appendChild(score);
 
     el.appendChild(div);
   }
 }
 
+// ---- Init ----
 async function loadState() {
   const data = await api("/state");
-  buckets = {};
+  serverBuckets = {};
   for (const [k, v] of Object.entries(data.buckets)) {
-    buckets[parseInt(k)] = v;
+    serverBuckets[parseInt(k)] = v;
   }
   bucketOrder = data.bucket_order;
-  updateProgress(data.done, data.total);
-  showWord(data.current);
+  ascOrder = [...bucketOrder].reverse();
+  historySize = data.history_size;
+
+  buildControls();
+  updateProgress(data.done, data.total, data.remaining);
+  updateUndoBtn();
+  showWord(data.current, false);
 }
 
+// ---- Keyboard ----
 document.addEventListener("keydown", async (e) => {
-  // Don't capture keys when settings modal is open or input focused
-  if (document.getElementById("settings-modal").classList.contains("open")) return;
-  if (document.activeElement.tagName === "INPUT") return;
-
-  if (e.code === "KeyS" && !e.ctrlKey) {
-    e.preventDefault();
-    await save();
+  if (document.getElementById("settings-modal").classList.contains("open")) {
+    if (e.code === "Escape") { closeSettings(); e.preventDefault(); }
     return;
   }
-  if ((e.code === "KeyS" && e.ctrlKey)) {
+  if (document.activeElement.tagName === "INPUT") return;
+
+  // Ctrl+S or just S for save
+  if (e.code === "KeyS") {
     e.preventDefault();
     await save();
     return;
@@ -544,46 +780,52 @@ document.addEventListener("keydown", async (e) => {
     });
 
     if (data.done) {
-      updateProgress(data.total, data.total);
-      showWord(null);
+      updateProgress(data.total, data.total, 0);
+      showWord(null, true);
+      historySize = 0;
+      updateUndoBtn();
       locked = false;
       return;
     }
 
-    flashScore(data.result.old_score, data.result.new_score, data.result.action);
-    addTicker(data.result.word, data.result.action, data.result.old_score, data.result.new_score);
-    updateProgress(data.done_count, data.total);
+    flash(data.result.old_score, data.result.new_score);
+    addTicker(data.result.word, data.result.action, data.result.new_score);
+    updateProgress(data.done_count, data.total, data.remaining);
+    historySize = data.history_size;
+    updateUndoBtn();
 
-    // Brief delay before showing next word
-    setTimeout(() => {
-      showWord(data.next);
-      locked = false;
-    }, 150);
+    // Show next word with animation — card exit/enter runs via CSS,
+    // we unlock immediately so rapid-fire scoring isn't throttled
+    showWord(data.next, true);
+    // Small debounce to prevent double-tap, but don't block perceptually
+    setTimeout(() => { locked = false; }, 80);
   } catch (err) {
     console.error(err);
+    toast("Error — check console", true);
     locked = false;
   }
 });
 
+// ---- Actions ----
 async function undo() {
+  if (historySize === 0) { toast("Nothing to undo", true); return; }
   const data = await api("/undo", { method: "POST", headers: { "Content-Type": "application/json" } });
-  if (data.error) {
-    toast("Nothing to undo");
-    return;
-  }
-  // Remove most recent ticker item
-  if (ticker.length > 0) ticker.shift();
+  if (data.error) { toast("Nothing to undo", true); return; }
+  if (tickerItems.length > 0) tickerItems.shift();
   renderTicker();
-  showWord(data.restored);
-  updateProgress(data.done_count, data.total);
-  toast("Undone: " + data.restored.word);
+  showWord(data.restored, true);
+  updateProgress(data.done_count, data.total, data.remaining);
+  historySize = data.history_size;
+  updateUndoBtn();
 }
 
 async function save() {
-  await api("/save", { method: "POST" });
-  toast("Saved!");
+  const data = await api("/save", { method: "POST" });
+  if (data.error) { toast("Save failed: " + data.error, true); return; }
+  toast("Saved");
 }
 
+// ---- Settings ----
 function openSettings() {
   api("/settings").then(cfg => {
     document.getElementById("s-master").value = cfg.master_wordlist_file || "";
@@ -617,17 +859,18 @@ async function saveSettings() {
     body: JSON.stringify(cfg),
   });
   closeSettings();
-  ticker = [];
+  tickerItems = [];
+  renderTicker();
   await loadState();
-  toast("Settings saved — queue rebuilt");
+  toast("Settings saved \u2014 queue rebuilt");
 }
 
-// Save before tab close
-window.addEventListener("beforeunload", (e) => {
+// Auto-save on tab close
+window.addEventListener("beforeunload", () => {
   navigator.sendBeacon("/api/save", "");
 });
 
-// Init
+// Boot
 loadState();
 </script>
 </body>
